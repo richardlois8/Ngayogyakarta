@@ -11,8 +11,8 @@ class DetailViewModel : ViewModel() {
     private val _detailDocument : MutableLiveData<DetailDocument?> = MutableLiveData()
     val detailDocumentLiveData : LiveData<DetailDocument?> = _detailDocument
 
-    fun getDetailDocument(query : String){
-        val client = APIConfig.getApiServie().getDetailDocument(query)
+    fun getDetailDocument(documentTitle : String, query : String){
+        val client = APIConfig.getApiServie().getDetailDocument(documentTitle, query)
         client.enqueue(object : retrofit2.Callback<GetDetailDocResponse>{
             override fun onResponse(
                 call: retrofit2.Call<GetDetailDocResponse>,

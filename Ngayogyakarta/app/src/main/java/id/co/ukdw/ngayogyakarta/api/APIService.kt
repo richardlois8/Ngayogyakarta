@@ -12,8 +12,8 @@ interface APIService {
     @GET("document")
     fun getAllDocument() : Call<GetAllDocResponse>
 
-    @GET("document/{id_document}")
-    fun getDetailDocument(@Path("id_document") idDocument : String) : Call<GetDetailDocResponse>
+    @GET("detail-document")
+    fun getDetailDocument(@Query("id_document") idDocument : String, @Query("query") query : String) : Call<GetDetailDocResponse>
 
     @GET("search")
     fun searchDocument(@Query("query") query : String) : Call<SearchDocResponse>

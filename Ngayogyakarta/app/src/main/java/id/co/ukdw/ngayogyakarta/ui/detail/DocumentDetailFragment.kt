@@ -39,8 +39,10 @@ class DocumentDetailFragment : Fragment() {
     }
 
     fun getData(){
+        showLoading(true)
+        val documentTitle = arguments?.getString("documentTitle")
         val query = arguments?.getString("query")
-        detailVM.getDetailDocument(query ?: "")
+        detailVM.getDetailDocument(documentTitle ?: "", query ?: "")
         detailVM.detailDocumentLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.data = it
@@ -54,7 +56,16 @@ class DocumentDetailFragment : Fragment() {
                 val typeFace = Typeface.createFromAsset(resources.assets, "font/noto_javanese.ttf")
                 binding.txtContent.typeface = typeFace
                 binding.txtContent.text = it.content
+                showLoading(false)
             }
+        }
+    }
+
+    private fun showLoading(state: Boolean) {
+        if (state) {
+            binding.loadingDetail.visibility = View.VISIBLE
+        } else {
+            binding.loadingDetail.visibility = View.GONE
         }
     }
 }
