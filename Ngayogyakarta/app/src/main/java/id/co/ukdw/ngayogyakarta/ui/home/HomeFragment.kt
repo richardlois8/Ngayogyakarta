@@ -19,6 +19,7 @@ import id.co.ukdw.ngayogyakarta.ui.RecyclerViewClickListener
 class HomeFragment : Fragment(), RecyclerViewClickListener {
     private lateinit var binding : FragmentHomeBinding
     private lateinit var homeVM : HomeViewModel
+    private lateinit var query : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,23 +37,27 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
     }
 
     private fun initData(){
+        showLoading(true)
         homeVM.getAllDocument()
         homeVM.allDocumentLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
                 val adapter = DocumentAdapter(it, this)
                 binding.recView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 binding.recView.adapter = adapter
+                showLoading(false)
             }
         }
     }
 
     private fun searchQuery(query: String){
+        showLoading(true)
         homeVM.searchDocument(query)
         homeVM.searchResultLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
                 val adapter = SearchAdapter(it, this)
                 binding.recView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 binding.recView.adapter = adapter
+                showLoading(false)
             }
         }
     }
@@ -61,7 +66,8 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
         binding.etSearchBar.setOnEditorActionListener{ _, actionId, event ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
-                    searchQuery(binding.etSearchBar.text.toString())
+                    query = binding.etSearchBar.text.toString()
+                    searchQuery(query)
                     true
                 }
                 else -> false
@@ -71,7 +77,16 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
 
     override fun onItemClicked(title: String) {
         val bundle = Bundle()
-        bundle.putString("query", title)
+        bundle.putString("documentTitle", title)
+        bundle.putString("query", query)
         findNavController().navigate(R.id.action_homeFragment_to_documentDetailFragment, bundle)
+    }
+
+    private fun showLoading(state: Boolean) {
+        if (state) {
+            binding.loadingHome.visibility = View.VISIBLE
+        } else {
+            binding.loadingHome.visibility = View.GONE
+        }
     }
 }
