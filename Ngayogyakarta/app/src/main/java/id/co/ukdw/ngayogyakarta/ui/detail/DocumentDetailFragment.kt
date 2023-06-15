@@ -1,11 +1,15 @@
 package id.co.ukdw.ngayogyakarta.ui.detail
 
 import android.graphics.Typeface
+import android.graphics.text.LineBreaker
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,7 +18,6 @@ import id.co.ukdw.ngayogyakarta.R
 import id.co.ukdw.ngayogyakarta.databinding.FragmentDetailDocumentBinding
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class DocumentDetailFragment : Fragment() {
     private lateinit var binding : FragmentDetailDocumentBinding
@@ -55,7 +58,8 @@ class DocumentDetailFragment : Fragment() {
                     .into(binding.imgDoc)
                 val typeFace = Typeface.createFromAsset(resources.assets, "font/noto_javanese.ttf")
                 binding.txtContent.typeface = typeFace
-                binding.txtContent.text = it.content
+//                binding.txtContent.text = it.content
+                binding.txtContent.text = Html.fromHtml(it.content, Html.FROM_HTML_MODE_COMPACT)
                 showLoading(false)
             }
         }
