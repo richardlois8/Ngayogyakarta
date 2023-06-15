@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerDrawable
 import id.co.ukdw.ngayogyakarta.api.response.DetailDocument
 import id.co.ukdw.ngayogyakarta.databinding.ItemDocumentBinding
 import id.co.ukdw.ngayogyakarta.model.Article
@@ -18,7 +20,24 @@ class DocumentAdapter(var listDoc : List<DetailDocument>, private val listener: 
     class viewHolder(var binding : ItemDocumentBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindData(data : DetailDocument, listener: RecyclerViewClickListener){
             binding.data = data
-            Glide.with(itemView.context).load(data.image).into(binding.imgDoc)
+
+            val shimmer = Shimmer.AlphaHighlightBuilder()// The attributes for a ShimmerDrawable is set by this builder
+                .setDuration(1500) // how long the shimmering animation takes to do one full sweep
+                .setBaseAlpha(0.7f) //the alpha of the underlying children
+                .setHighlightAlpha(0.6f) // the shimmer alpha amount
+                .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
+                .setAutoStart(true)
+                .build()
+            val shimmerDrawable = ShimmerDrawable().apply {
+                setShimmer(shimmer)
+            }
+
+
+            Glide.with(itemView.context)
+                .load(data.image)
+                .placeholder(shimmerDrawable)
+                .into(binding.imgDoc)
+
             binding.cvDocument.setOnClickListener{
                 listener.onItemClicked(data.title)
             }
