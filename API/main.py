@@ -1,8 +1,9 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, File, UploadFile
-from pydantic import BaseModel
+from fastapi.logger import logger
+from pydantic import BaseSettings
 import SearchEngine 
-import uuid
+import os, sys
 
 app = FastAPI()
 
@@ -16,10 +17,10 @@ def get_all_document():
     res = se.get_all_document()
     return {"error" : "false", "message" : "Success get detail document", "data" : res}
 
-@app.get("/document/{id_document}")
-def get_detail_document(id_document : str):
+@app.get("/detail-document")
+def get_detail_document(id_document : str, query : str):
     se = SearchEngine.SearchEngine()
-    detail_doc = se.detail_document(id_document)
+    detail_doc = se.detail_document(id_document, query)
     return {"error" : "false", "message" : "Success get detail document", "data" : detail_doc}
 
 @app.get("/search")

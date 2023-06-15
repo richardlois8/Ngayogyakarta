@@ -7,7 +7,7 @@ from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFacto
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import csv
+import csv, re
 
 class SearchEngine:
     path = 'corpus/ID/'
@@ -54,7 +54,7 @@ class SearchEngine:
         tfidf_query = tfidf_vec.transform([keyword])
         cos_sim = cosine_similarity(tfidf_query, tfidf_corpus)
         dict_corpus = {'Adi Sucipto' : cos_sim[0][0], 'Gudeg' : cos_sim[0][1], 'Keraton' : cos_sim[0][2],  'Malioboro' : cos_sim[0][3], 'Merapi' :     cos_sim[0][4], 'Merbabu' : cos_sim[0][5], 'Prambanan' : cos_sim[0][6], 'Ratu Boko' : cos_sim[0][7], 'Stasiun Lempuyangan' : cos_sim[0][8], 'Stasiun Tugu' : cos_sim[0][9], 'Tugu Jogja' : cos_sim[0][10], 'Universitas Islam Indonesia' : cos_sim[0][11], 'Universitas Gajah Mada' : cos_sim[0][12], 'Universitas Negeri Yogyakarta' : cos_sim[0][13], 'Wayang' : cos_sim[0][14]}
-        sorted_cos_sim = sorted(dict_corpus.items(), key=lambda x: x[1], reverse=True)
+        sorted_cos_sim = sorted(dict_corpus.items(), key=lambda x: x[1], reverse=True)[0:3]
         dict_cos_sim = dict(sorted_cos_sim)
         res = []
         for title, cos_sim in dict_cos_sim.items():
@@ -65,11 +65,19 @@ class SearchEngine:
             res.append(temp)
         return res
     
-    def detail_document(self, id_document):
+    def detail_document(self, id_document, query):
         detail_response = dict()
+        content = self.content[id_document]
+        split_query = query.split(' ')
+        split_query.extend(query.lower().split())
+        split_query.extend(query.title().split())
+        print(split_query)
+        for query in split_query:
+            content = content.replace(query, f'  <b>{query}</b>')
+        
         detail_response['title'] = id_document
         detail_response['image'] = self.image[id_document]
-        detail_response['content'] = self.content[id_document]
+        detail_response['content'] = content
         return detail_response
     
     def get_all_document(self):
@@ -83,7 +91,7 @@ class SearchEngine:
             
         return all_doc_res
     
-# if __name__ == '__main__':
-#     search_engine = SearchEngine()
-#     query = "Makanan khas Yogyakarta"
-#     print(search_engine.search_document(query))
+if __name__ == '__main__':
+    search_engine = SearchEngine()
+    query = "Makanan khas Yogyakarta"
+    print(search_engine.detail_document("Gudeg",query))

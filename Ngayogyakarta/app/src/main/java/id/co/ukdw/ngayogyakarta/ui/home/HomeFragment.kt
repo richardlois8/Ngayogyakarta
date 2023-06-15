@@ -47,10 +47,11 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
                 showLoading(false)
             }
         }
+        query = ""
+        binding.etSearchBar.setText(query)
     }
 
     private fun searchQuery(query: String){
-        showLoading(true)
         homeVM.searchDocument(query)
         homeVM.searchResultLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -68,6 +69,7 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     query = binding.etSearchBar.text.toString()
                     searchQuery(query)
+                    showLoading(true)
                     true
                 }
                 else -> false
